@@ -14,8 +14,14 @@ return new class extends Migration
         Schema::create('filters', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('id_f2');
+            $table->integer('id_catalog');
+            $table->integer('id_filter')->nullable();
+            $table->boolean('is_custom_input');             # Пользователь вводит сам
+            $table->boolean('required_to_fill_out');        # обязательно для заполнения
+            # $table->boolean('user_input');
             $table->timestamps();
+
+            $table->softDeletes();
         });
     }
 

@@ -12,6 +12,9 @@ Route::get('/', function () {
 
 Route::get('catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('catalog/create', [CatalogController::class, 'create'])->name('catalog.create');
+Route::get('catalog/update', [CatalogController::class, 'update'])->name('catalog.update');
+Route::get('catalog/delete', [CatalogController::class, 'delete'])->name('catalog.delete');
+Route::get('catalog/update_or_create', [CatalogController::class, 'updateOrCreate'])->name('catalog.update_or_create');
 
 Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');

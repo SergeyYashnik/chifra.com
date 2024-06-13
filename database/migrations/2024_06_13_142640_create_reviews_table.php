@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('filter_1_lvl', function (Blueprint $table) {
+        Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('id_cat');
+            $table->integer('grade');
+            $table->text('advantages')->nullable();
+            $table->text('flaws')->nullable();
+            $table->text('comment')->nullable();
+
             $table->timestamps();
         });
     }
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('filter_1_lvl');
+        Schema::dropIfExists('reviews');
     }
 };

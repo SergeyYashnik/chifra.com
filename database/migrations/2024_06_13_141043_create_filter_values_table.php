@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('catalogs', function (Blueprint $table) {
+        Schema::create('filter_values', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('image')->nullable();
-            $table->integer('id_catalog')->nullable();
+            $table->integer('id_filter');
+            $table->string('value');
+            $table->boolean('user_input');
             $table->timestamps();
-
-            $table->softDeletes();
         });
-
     }
 
     /**
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('catalogs');
+        Schema::dropIfExists('filter_values');
     }
 };

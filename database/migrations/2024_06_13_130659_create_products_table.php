@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('filter_2_lvl', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('id_cat');
+            $table->string('description')->nullable();
+            $table->unsignedInteger('price');
+            $table->integer('id_catalog');
+            $table->unsignedInteger('orders')->nullable();
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -24,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('filter_2_lvl');
+        Schema::dropIfExists('products');
     }
 };
