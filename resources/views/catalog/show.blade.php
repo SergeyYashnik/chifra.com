@@ -4,6 +4,6 @@
 
 @section('content')
     @foreach($catalogs as $catalog)
-    {{ $catalog->name }}
+        <h5 class="card-title">{{ $catalog->name }}</h5>
     @endforeach
 @endsection

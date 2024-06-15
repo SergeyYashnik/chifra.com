@@ -29,12 +29,22 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                         </li>
+                        @if(auth()->user()->role === 'admin')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin') }}">Панель Админа</a>
+                            </li>
+                        @elseif(auth()->user()->role === 'manager')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('manager') }}">Панель Менеджера</a>
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <a class="nav-link" href="#">{{ auth()->user()->name }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('logout') }}">Logout</a>
                         </li>
+
                     @else
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('register') }}">Register</a>

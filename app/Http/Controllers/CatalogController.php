@@ -7,15 +7,18 @@ use App\Models\Catalog;
 class CatalogController extends Controller
 {
     public function index(){
-        # $catalogs = Catalog::where('image', null)->get();
-        $catalogs = Catalog::all();
-
-//        foreach($catalogs as $catalog){
-//            dump($catalog->name);
-//        }
-
-        return view('catalog', compact('catalogs'));
+        $catalogs = Catalog::where('id_catalog', null)->get();
+        # $catalogs = Catalog::all();
+        return view('catalog.index', compact('catalogs'));
     }
+
+    public function show($id)
+    {
+        $catalogs = Catalog::where('id_catalog', $id)->get();
+        return view('catalog.show', compact('catalogs'));
+    }
+
+
 
     public function create()
     {

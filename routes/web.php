@@ -11,6 +11,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('catalog', [CatalogController::class, 'index'])->name('catalog');
+Route::get('catalog/{id}', [CatalogController::class, 'show'])->name('catalog.show');
+
 Route::get('catalog/create', [CatalogController::class, 'create'])->name('catalog.create');
 Route::get('catalog/update', [CatalogController::class, 'update'])->name('catalog.update');
 Route::get('catalog/delete', [CatalogController::class, 'delete'])->name('catalog.delete');
@@ -48,6 +50,12 @@ Route::middleware('auth')->group(function (){
 
     Route::get('logout', [UserController::class, 'logout'])->name('logout');
 
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('admin',function (){
+        dump("123");
+    })->name('admin');
 });
 
 
