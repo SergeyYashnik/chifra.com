@@ -23,7 +23,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Login</button>
-        <a href="{{ route('login') }}" class="ms-3">Already registered?</a>
+        <a href="{{ route('register') }}" class="ms-3">Already registered?</a>
 
     </form>
 

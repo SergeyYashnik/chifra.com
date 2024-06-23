@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('image')->nullable();
             $table->integer('id_catalog')->nullable();
+            $table->integer('lvl');
             $table->timestamps();
 
             $table->softDeletes();

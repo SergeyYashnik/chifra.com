@@ -22,7 +22,7 @@
                     <a class="nav-link" aria-current="page" href="{{ route('home') }}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('catalog') }}">Catalog</a>
+                    <a class="nav-link" href="{{ route('catalogs') }}">Catalog</a>
                 </li>
                 @if(Route::has('login'))
                     @auth
@@ -31,7 +31,7 @@
                         </li>
                         @if(auth()->user()->role === 'admin')
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin') }}">Панель Админа</a>
+                                <a class="nav-link" href="{{ route('admin.catalog.index') }}">Панель Админа</a>
                             </li>
                         @elseif(auth()->user()->role === 'manager')
                             <li class="nav-item">

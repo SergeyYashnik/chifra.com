@@ -1,22 +1,27 @@
 <?php
 
+use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminCatalogController;
+use App\Http\Controllers\AdminFilterController;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('catalog', [CatalogController::class, 'index'])->name('catalog');
-Route::get('catalog/{id}', [CatalogController::class, 'show'])->name('catalog.show');
+Route::get('catalogs', [CatalogController::class, 'index'])->name('catalogs');
+Route::get('catalog', [CatalogController::class, 'show'])->name('catalog.show');
+//Route::get('catalog/{id}', [CatalogController::class, 'show'])->name('catalog.show');
 
-Route::get('catalog/create', [CatalogController::class, 'create'])->name('catalog.create');
-Route::get('catalog/update', [CatalogController::class, 'update'])->name('catalog.update');
-Route::get('catalog/delete', [CatalogController::class, 'delete'])->name('catalog.delete');
-Route::get('catalog/update_or_create', [CatalogController::class, 'updateOrCreate'])->name('catalog.update_or_create');
+//Route::get('catalog/create', [CatalogController::class, 'create'])->name('catalog.create');
+//Route::get('catalog/update', [CatalogController::class, 'update'])->name('catalog.update');
+//Route::get('catalog/delete', [CatalogController::class, 'delete'])->name('catalog.delete');
+//Route::get('catalog/update_or_create', [CatalogController::class, 'updateOrCreate'])->name('catalog.update_or_create');
 
 Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
@@ -53,9 +58,34 @@ Route::middleware('auth')->group(function (){
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('admin',function (){
-        dump("123");
-    })->name('admin');
+    Route::get('admin', [AdminController::class, 'index'])->name('admin.index');
+
+
+    Route::get('admin/catalog', [AdminCatalogController::class, 'index'])->name('admin.catalog.index');
+    Route::post('admin/catalog', [AdminCatalogController::class, 'store'])->name('admin.catalog.store');
+
+    Route::get('admin/catalog/{id}/edit', [AdminCatalogController::class, 'edit'])->name('admin.catalog.edit');
+    Route::put('admin/catalog/{id}', [AdminCatalogController::class, 'update'])->name('admin.catalog.update');
+    Route::post('admin/catalog/{id}/addSubcatalog', [AdminCatalogController::class, 'addSubcatalog'])->name('admin.catalog.addSubcatalog');
+    Route::post('admin/catalog/{id}/addFilter', [AdminCatalogController::class, 'addFilter'])->name('admin.catalog.addFilter');
+
+    Route::delete('admin/catalog/{id}/removeImage', [AdminCatalogController::class, 'removeImage'])->name('admin.catalog.removeImage');
+    Route::delete('admin/catalog/{id}', [AdminCatalogController::class, 'destroy'])->name('admin.catalog.destroy');
+
+
+    Route::get('admin/filter/{id}/edit', [AdminFilterController::class, 'edit'])->name('admin.filter.edit');
+    Route::put('admin/filter/{id}', [AdminFilterController::class, 'update'])->name('admin.filter.update');
+    Route::delete('admin/filter/{id}', [AdminFilterController::class, 'destroy'])->name('admin.filter.destroy');
+
+    Route::post('admin/filter/{id}/addSubfilter', [AdminFilterController::class, 'addSubfilter'])->name('admin.filter.addSubfilter');
+    Route::post('admin/filter/{id}/addValue', [AdminFilterController::class, 'addValue'])->name('admin.filter.addValue');
+
+    Route::delete('admin/filter/{id}/removeValue/{valueId}', [AdminFilterController::class, 'removeValue'])->name('admin.filter.removeValue');
+
+    Route::get('admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
+
+
+    Route::get('admin/users', [AdminController::class, 'users'])->name('admin.users');
 });
 
 
