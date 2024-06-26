@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\AdminFilterController;
+use App\Http\Controllers\AdminBrandController;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,6 +18,7 @@ Route::get('/', function () {
 
 Route::get('catalogs', [CatalogController::class, 'index'])->name('catalogs');
 Route::get('catalog', [CatalogController::class, 'show'])->name('catalog.show');
+Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 //Route::get('catalog/{id}', [CatalogController::class, 'show'])->name('catalog.show');
 
 //Route::get('catalog/create', [CatalogController::class, 'create'])->name('catalog.create');
@@ -83,6 +86,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('admin/filter/{id}/removeValue/{valueId}', [AdminFilterController::class, 'removeValue'])->name('admin.filter.removeValue');
 
     Route::get('admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
+    Route::get('admin/products/create', [AdminProductController::class, 'create'])->name('admin.products.create');
+    Route::post('admin/products', [AdminProductController::class, 'store'])->name('admin.products.store');
+
+
+
+    Route::get('admin/brands', [AdminBrandController::class, 'index'])->name('admin.brand.index');
+    Route::post('admin/brands', [AdminBrandController::class, 'store'])->name('admin.brand.store');
+    Route::get('admin/brands/{id}/edit', [AdminBrandController::class, 'edit'])->name('admin.brand.edit');
+    Route::post('admin/brands/{id}', [AdminBrandController::class, 'update'])->name('admin.brand.update');
+    Route::post('admin/brands/{id}/destroy-logo', [AdminBrandController::class, 'destroyLogo'])->name('admin.brand.destroy-logo');
+
+
 
 
     Route::get('admin/users', [AdminController::class, 'users'])->name('admin.users');

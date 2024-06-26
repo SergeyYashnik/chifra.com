@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Catalog;
+use App\Models\Filter;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CatalogController extends Controller
@@ -16,36 +19,123 @@ class CatalogController extends Controller
 
     public function show(Request $request)
     {
-        if ($request->input('catalog_lvl_1')) {
-            $catalogs_lvl_1 = Catalog::where('name', $request->input('catalog_lvl_1'))->get();
-            if ($request->input('catalog_lvl_2')) {
-                $catalogs_lvl_2 = Catalog::where('id_catalog', $catalogs_lvl_1->first()->id)->where('name', $request->input('catalog_lvl_2'))->get();
+        $catalogs_lvl_1 = null;
+        $catalogs_lvl_2 = null;
+        $catalogs_lvl_3 = null;
+        $filtersQuery = null;
+        $queryProducts = Product::query();
+        $requestCatalogLvl1 = $request->input('catalog_lvl_1') ?? null;
+        $requestCatalogLvl2 = $request->input('catalog_lvl_2') ?? null;
+        $requestCatalogLvl3 = $request->input('catalog_lvl_3') ?? null;
 
-                if ($request->input('catalog_lvl_3')) {
-                    $catalogs_lvl_3 = Catalog::where('id_catalog', $catalogs_lvl_2->first()->id)->where('name', $request->input('catalog_lvl_3'))->get();
+        if ($requestCatalogLvl1) {
+            $catalogs_lvl_1 = Catalog::where('name', $requestCatalogLvl1)
+                ->withCount('productsLvl1 as count_1_lvl')
+                ->get();
+
+            if ($requestCatalogLvl2) {
+                $catalogs_lvl_2 = Catalog::where('id_catalog', $catalogs_lvl_1->first()->id)
+                    ->where('name', $requestCatalogLvl2)
+                    ->withCount('productsLvl2 as count_2_lvl')
+                    ->get();
+
+                if ($requestCatalogLvl3) {
+                    $catalogs_lvl_3 = Catalog::where('id_catalog', $catalogs_lvl_2->first()->id)
+                        ->where('name', $requestCatalogLvl3)
+                        ->withCount('productsLvl3 as count_3_lvl')
+                        ->get();
+
+                    if ($catalogs_lvl_3->isNotEmpty()){
+                        $filtersQuery = Filter::where('id_catalog', $catalogs_lvl_3->first()->id);
+                    }
+                    $queryProducts = Product::where('catalogs_lvl_3', $catalogs_lvl_3->first()->id);
 
                 } else {
-                    $catalogs_lvl_3 = Catalog::where('id_catalog', $catalogs_lvl_2->first()->id)->get();
+                    $catalogs_lvl_3 = Catalog::where('id_catalog', $catalogs_lvl_2->first()->id)
+                        ->withCount('productsLvl3 as count_3_lvl')
+                        ->get();
+
+                    if ($catalogs_lvl_3->isNotEmpty()) {
+                        $filtersQuery = Filter::where('id_catalog', $catalogs_lvl_2->first()->id);
+                    }
+                    $queryProducts = Product::where('catalogs_lvl_2', $catalogs_lvl_2->first()->id);
                 }
-
             } else {
-                $catalogs_lvl_2 = Catalog::where('id_catalog', $catalogs_lvl_1->first()->id)->get();
-                $catalogs_lvl_3 = null;
+                $catalogs_lvl_2 = Catalog::where('id_catalog', $catalogs_lvl_1->first()->id)
+                    ->withCount('productsLvl2 as count_2_lvl')
+                    ->get();
+
+                if ($catalogs_lvl_2->isNotEmpty()) {
+                    $filtersQuery = Filter::where('id_catalog', $catalogs_lvl_2->first()->id);
+                }
+                $queryProducts = Product::where('catalogs_lvl_1', $catalogs_lvl_1->first()->id);
             }
-
         } else {
-            $catalogs_lvl_1 = Catalog::where('lvl', 1)->get();
-            $catalogs_lvl_2 = null;
-            $catalogs_lvl_3 = null;
+            $catalogs_lvl_1 = Catalog::where('lvl', 1)
+                ->withCount('productsLvl1 as count_1_lvl')
+                ->get();
         }
-        return view('catalog.show', compact(['catalogs_lvl_1', 'catalogs_lvl_2', 'catalogs_lvl_3']));
-    }
 
-//    public function show($id)
-//    {
-//        $catalogs = Catalog::where('id_catalog', $id)->get();
-//        return view('catalog.show', compact('catalogs'));
-//    }
+        $massForBrand = $queryProducts->pluck('brand')->unique()->toArray();
+        $brands = Brand::whereIn('id', $massForBrand)->get();
+        $requestBrands = $request->input('brands') ?? null;
+
+        $minPrice = $queryProducts->min('price');
+        $requestMinPrice = $request->input('min_price') ?? null;
+        $maxPrice = $queryProducts->max('price');
+        $requestMaxPrice = $request->input('max_price') ?? null;
+
+
+        if ($filtersQuery && $filtersQuery->exists()) {
+            $filters = $filtersQuery
+                ->where(function ($query) {
+                    $query->where('required_to_fill_out', 1)
+                        ->orWhereNull('required_to_fill_out');
+                })
+                ->with(['requiredSubfilters.filterValue' => function ($query) use ($queryProducts) {
+                    $query->whereHas('connectionProductFilterValue', function ($subQuery) use ($queryProducts) {
+                        $subQuery->whereIn('product_id', $queryProducts->pluck('id')->toArray());
+                    });
+                }, 'filterValue' => function ($query) use ($queryProducts) {
+                    $query->whereHas('connectionProductFilterValue', function ($subQuery) use ($queryProducts) {
+                        $subQuery->whereIn('product_id', $queryProducts->pluck('id')->toArray());
+                    });
+                }])
+                ->get();
+        } else {
+            $filters = null;
+        }
+
+
+
+
+        if ($request->input('filter_id')){
+            $filter_id = $request->input('filter_id');
+
+            foreach ($filter_id as $filterValueId) {
+                $queryProducts->whereHas('connectionProductFilterValues', function ($query) use ($filterValueId) {
+                    $query->whereIn('filter_value_id', array_values($filterValueId));
+                });
+            }
+        } else {
+            $filter_id = null;
+        }
+
+        if ($requestBrands){
+            $queryProducts->whereIn('brand', array_values($requestBrands));
+        }
+        if ($requestMinPrice){
+            $queryProducts->where('price', '>=', $requestMinPrice);
+        }
+        if ($requestMaxPrice){
+            $queryProducts->where('price', '<=', $requestMaxPrice);
+        }
+
+        $products = $queryProducts->with('oneImage')->orderByDesc('visits')->get();
+
+        $count = Product::count();
+        return view('catalog.show', compact(['catalogs_lvl_1', 'catalogs_lvl_2', 'catalogs_lvl_3', 'products', 'count', 'filters', 'filter_id', 'brands', 'requestCatalogLvl1', 'requestCatalogLvl2', 'requestCatalogLvl3', 'requestBrands', 'minPrice', 'maxPrice']));
+    }
 
 
     public function create()

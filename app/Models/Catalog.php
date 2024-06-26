@@ -15,4 +15,19 @@ class Catalog extends Model
         'name', 'image',
     ];
 
+    public function productsLvl1()
+    {
+        return $this->hasMany(Product::class, 'catalogs_lvl_1');
+    }
+
+    public function productsLvl2()
+    {
+        return $this->hasMany(Product::class, 'catalogs_lvl_2');
+    }
+
+    public function productsLvl3()
+    {
+        return $this->hasMany(Product::class, 'catalogs_lvl_3');
+    }
+
 }

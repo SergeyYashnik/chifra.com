@@ -19,4 +19,19 @@ class Filter extends Model
     {
         return $this->hasMany(Filter::class, 'id_filter');
     }
+    public function filterValue()
+    {
+        return $this->hasMany(FilterValues::class, 'id_filter');
+    }
+
+    public function requiredSubfilters()
+    {
+        return $this->hasMany(Filter::class, 'id_filter')
+            ->where('required_to_fill_out', 1);
+    }
+
+
+
+
+
 }

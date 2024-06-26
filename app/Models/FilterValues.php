@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class FilterValues extends Model
 {
     use HasFactory;
+
+    public function connectionProductFilterValue()
+    {
+        return $this->hasMany(ConnectionProductFilterValue::class, 'filter_value_id');
+    }
 }

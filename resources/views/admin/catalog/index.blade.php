@@ -4,6 +4,8 @@
 
 @section('content')
     <div class="container mt-5">
+        <a href="{{ route('admin.brand.index') }}" class="btn btn-primary mt-3">Настройки брендов</a>
+
         <h2>Добавить новую категорию</h2>
         <form action="{{ route('admin.catalog.store') }}" method="POST" enctype="multipart/form-data" class="mb-5">
             @csrf

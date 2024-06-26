@@ -44,7 +44,7 @@
         @endif
 
         @if($subcatalogs->isEmpty())
-            <a href="{{ route('admin.products.index', ['id' => $catalog->id]) }}" class="btn btn-primary mt-3">Настройки товара</a>
+            <a href="{{ route('admin.products.index', ['id_catalog' => $catalog->id]) }}" class="btn btn-primary mt-3">Настройки товара</a>
 
             <h3>Фильтры</h3>
             <form action="{{ route('admin.catalog.addFilter', ['id' => $catalog->id]) }}" method="POST" class="mb-5">
@@ -67,10 +67,10 @@
                 <div class="row align-items-center mb-3 border p-3">
                     <div class="col-md-6">
                         <h5>{{ $filter->name }}</h5>
-                        @if($filter->is_custom_input != null)
+                        @if($filter->is_custom_input !== null)
                             <p>Произвольный ввод: {{ $filter->is_custom_input ? 'Да' : 'Нет' }}</p>
                         @endif
-                        @if($filter->required_to_fill_out != null)
+                        @if($filter->required_to_fill_out !== null)
                             <p>Обязателен для заполнения: {{ $filter->required_to_fill_out ? 'Да' : 'Нет' }}</p>
                         @endif
                     </div>
