@@ -36,11 +36,11 @@
                             </li>
                         @elseif(auth()->user()->role === 'manager')
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('manager') }}">Панель Менеджера</a>
+                                <a class="nav-link" href="{{ route('admin.catalog.index') }}">Панель Менеджера</a>
                             </li>
                         @endif
                         <li class="nav-item">
-                            <a class="nav-link" href="#">{{ auth()->user()->name }}</a>
+                            <a class="nav-link" href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('logout') }}">Logout</a>

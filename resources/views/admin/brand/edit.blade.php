@@ -3,7 +3,7 @@
 @section('title', "Редактирование бренда")
 
 @section('content')
-    <div class="container">
+        @include('include.admin_menu')
         <h1 class="my-4">Редактирование бренда</h1>
 
         <!-- Форма для редактирования бренда -->
@@ -36,5 +36,4 @@
                 </form>
             </div>
         @endif
-    </div>
 @endsection

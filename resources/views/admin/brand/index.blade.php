@@ -3,7 +3,7 @@
 @section('title', "Бренды")
 
 @section('content')
-    <div class="container">
+    @include('include.admin_menu')
         <h1 class="my-4">Бренды</h1>
 
         <!-- Форма для добавления нового бренда -->
@@ -52,5 +52,4 @@
                 </tbody>
             </table>
         </div>
-    </div>
 @endsection

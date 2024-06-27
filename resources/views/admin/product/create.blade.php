@@ -3,7 +3,9 @@
 @section('title', "Добавление товара")
 
 @section('content')
+    @include('include.admin_menu')
     <div class="container mt-4">
+
         <h1>Добавление товара</h1>
 
         <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">

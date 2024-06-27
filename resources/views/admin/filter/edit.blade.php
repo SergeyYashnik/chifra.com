@@ -3,6 +3,7 @@
 @section('title', "Редактирование фильтра")
 
 @section('content')
+    @include('include.admin_menu')
     @if($filter->id_filter == null)
         <a href="{{ route('admin.catalog.edit', ['id' => $filter->id_catalog]) }}"
            class="btn btn-primary mt-3">Назад</a>

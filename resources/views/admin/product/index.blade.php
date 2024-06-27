@@ -3,7 +3,7 @@
 @section('title', "Редактирование товаров")
 
 @section('content')
-
+    @include('include.admin_menu')
     <div class="container mt-4">
         <h1>Редактирование товаров</h1>
         <a href="{{ route('admin.products.create', ['id_catalog' => $id_catalog]) }}" class="btn btn-primary">Добавить товар</a>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -11,6 +12,7 @@ use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\AdminFilterController;
 use App\Http\Controllers\AdminBrandController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AdminCityController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -58,6 +60,18 @@ Route::middleware('auth')->group(function (){
 
     Route::get('logout', [UserController::class, 'logout'])->name('logout');
 
+
+    Route::get('profile', [UserController::class, 'profile'])->name('profile');
+    Route::post('profile/update-name', [UserController::class, 'updateName'])->name('profile.updateName');
+    Route::post('profile/update-phone', [UserController::class, 'updatePhone'])->name('profile.updatePhone');
+    Route::post('profile/update-password', [UserController::class, 'updatePassword'])->name('profile.updatePassword');
+    Route::post('profile/update-login', [UserController::class, 'updateLogin'])->name('profile.updateLogin');
+
+    Route::post('profile/add-address', [UserController::class, 'addAddress'])->name('profile.addAddress');
+    Route::delete('profile/address/{address}', [UserController::class, 'destroyAddress'])->name('address.delete');
+
+
+
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -98,9 +112,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('admin/brands/{id}/destroy-logo', [AdminBrandController::class, 'destroyLogo'])->name('admin.brand.destroy-logo');
 
 
+    Route::get('cities', [AdminCityController::class, 'index'])->name('admin.city.index');
+    Route::post('cities', [AdminCityController::class, 'store'])->name('admin.city.store');
+    Route::get('cities/{city}/edit', [AdminCityController::class, 'edit'])->name('admin.city.edit');
+    Route::put('cities/{city}', [AdminCityController::class, 'update'])->name('admin.city.update');
+    Route::delete('cities/{city}', [AdminCityController::class, 'destroy'])->name('admin.city.delete');
 
 
-    Route::get('admin/users', [AdminController::class, 'users'])->name('admin.users');
+
+    Route::get('admin/users', [AdminUserController::class, 'index'])->name('admin.users');
+    Route::get('admin/user/search', [AdminUserController::class, 'search'])->name('admin.user.search');
+    Route::post('admin/user/update-role', [AdminUserController::class, 'update'])->name('admin.user.update');
+
+
+
 });
 
 

@@ -4,8 +4,7 @@
 
 @section('content')
     <div class="container mt-5">
-        <a href="{{ route('admin.brand.index') }}" class="btn btn-primary mt-3">Настройки брендов</a>
-
+        @include('include.admin_menu')
         <h2>Добавить новую категорию</h2>
         <form action="{{ route('admin.catalog.store') }}" method="POST" enctype="multipart/form-data" class="mb-5">
             @csrf
@@ -24,7 +23,8 @@
             <div class="row align-items-center mb-3 border p-3">
                 <div class="col-md-2">
                     @if($catalog->image)
-                        <img src="{{ asset('storage/' . $catalog->image) }}" class="img-fluid" alt="{{ $catalog->name }}">
+                        <img src="{{ asset('storage/' . $catalog->image) }}" class="img-fluid"
+                             alt="{{ $catalog->name }}">
                     @endif
                 </div>
                 <div class="col-md-6">
@@ -32,7 +32,8 @@
                 </div>
                 <div class="col-md-4 text-right">
                     <a href="{{ route('admin.catalog.edit', ['id' => $catalog->id]) }}" class="btn btn-warning btn-sm">Настройки</a>
-                    <form action="{{ route('admin.catalog.destroy', ['id' => $catalog->id]) }}" method="POST" style="display:inline;">
+                    <form action="{{ route('admin.catalog.destroy', ['id' => $catalog->id]) }}" method="POST"
+                          style="display:inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm">Удалить</button>

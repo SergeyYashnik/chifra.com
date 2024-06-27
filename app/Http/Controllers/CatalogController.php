@@ -13,7 +13,6 @@ class CatalogController extends Controller
     public function index()
     {
         $catalogs = Catalog::where('lvl', 1)->get();
-        # $catalogs = Catalog::all();
         return view('catalog.index', compact('catalogs'));
     }
 
