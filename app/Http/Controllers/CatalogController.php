@@ -26,6 +26,34 @@ class CatalogController extends Controller
         $requestCatalogLvl1 = $request->input('catalog_lvl_1') ?? null;
         $requestCatalogLvl2 = $request->input('catalog_lvl_2') ?? null;
         $requestCatalogLvl3 = $request->input('catalog_lvl_3') ?? null;
+        $count = Product::count();
+        $filters = null;
+        $filter_id = null;
+        $brands = null;
+        $requestBrands = null;
+        $minPrice = null;
+        $maxPrice = null;
+
+        if ($request->input('search')) {
+            $search = $request->input('search');
+            $searchResults = Product::search($search)->get();
+
+            $productIds = $searchResults->pluck('id');
+
+            $products = Product::whereIn('id', $productIds)
+                ->with('oneImage')
+                ->orderByDesc('visits')
+                ->get();
+
+            $catalogs_lvl_1 = Catalog::where('lvl', 1)
+                ->withCount('productsLvl1 as count_1_lvl')
+                ->get();
+
+            return view('catalog.show', compact(['catalogs_lvl_1', 'catalogs_lvl_2', 'catalogs_lvl_3', 'products', 'count', 'filters', 'filter_id', 'brands', 'requestCatalogLvl1', 'requestCatalogLvl2', 'requestCatalogLvl3', 'requestBrands', 'minPrice', 'maxPrice']));
+
+
+        }
+
 
         if ($requestCatalogLvl1) {
             $catalogs_lvl_1 = Catalog::where('name', $requestCatalogLvl1)
@@ -44,7 +72,7 @@ class CatalogController extends Controller
                         ->withCount('productsLvl3 as count_3_lvl')
                         ->get();
 
-                    if ($catalogs_lvl_3->isNotEmpty()){
+                    if ($catalogs_lvl_3->isNotEmpty()) {
                         $filtersQuery = Filter::where('id_catalog', $catalogs_lvl_3->first()->id);
                     }
                     $queryProducts = Product::where('catalogs_lvl_3', $catalogs_lvl_3->first()->id);
@@ -101,14 +129,10 @@ class CatalogController extends Controller
                     });
                 }])
                 ->get();
-        } else {
-            $filters = null;
         }
 
 
-
-
-        if ($request->input('filter_id')){
+        if ($request->input('filter_id')) {
             $filter_id = $request->input('filter_id');
 
             foreach ($filter_id as $filterValueId) {
@@ -116,23 +140,20 @@ class CatalogController extends Controller
                     $query->whereIn('filter_value_id', array_values($filterValueId));
                 });
             }
-        } else {
-            $filter_id = null;
         }
 
-        if ($requestBrands){
+        if ($requestBrands) {
             $queryProducts->whereIn('brand', array_values($requestBrands));
         }
-        if ($requestMinPrice){
+        if ($requestMinPrice) {
             $queryProducts->where('price', '>=', $requestMinPrice);
         }
-        if ($requestMaxPrice){
+        if ($requestMaxPrice) {
             $queryProducts->where('price', '<=', $requestMaxPrice);
         }
-
         $products = $queryProducts->with('oneImage')->orderByDesc('visits')->get();
 
-        $count = Product::count();
+
         return view('catalog.show', compact(['catalogs_lvl_1', 'catalogs_lvl_2', 'catalogs_lvl_3', 'products', 'count', 'filters', 'filter_id', 'brands', 'requestCatalogLvl1', 'requestCatalogLvl2', 'requestCatalogLvl3', 'requestBrands', 'minPrice', 'maxPrice']));
     }
 

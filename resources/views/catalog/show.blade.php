@@ -5,6 +5,14 @@
 @section('content')
 
     <div class="row">
+        <div class="col-md-12">
+            <h3>Поиск товара</h3>
+            <form method="GET" action="{{ route('catalog.show') }}" style="display: flex; ">
+                <input type="text" id="search" name="search" class="form-control mr-2" style="width: 90%;"
+                       placeholder="Введите название товара" value="{{ request('search') }}">
+                <button type="submit" class="btn btn-primary" style="width: 8%;">Поиск</button>
+            </form>
+        </div>
         <div class="col-md-3">
             <div class="filters__filter">
                 <div class="tree" style="font-size: 14px;">
@@ -51,7 +59,7 @@
                 </div>
             </div>
 
-            @if(!$brands->isEmpty() or ($minPrice and $maxPrice) or ($filters and !$filters->isEmpty()))
+            @if(($brands and !$brands->isEmpty()) or ($minPrice and $maxPrice) or ($filters and !$filters->isEmpty()))
                 <form action="{{ route('catalog.show') }}" method="GET">
                     @if($requestCatalogLvl1)
                         <input type="hidden" name="catalog_lvl_1" value="{{ $catalog_lvl_1->name }}">
@@ -169,8 +177,6 @@
                             ]) }}" class="btn btn-danger">Сбросить</a>
                 </form>
             @endif
-
-
 
 
         </div>

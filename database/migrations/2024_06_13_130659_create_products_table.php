@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->unsignedInteger('price');
-            $table->string('brand');
+            $table->unsignedInteger('brand');
             $table->integer('id_catalog');
             $table->integer('sale')->nullable();
             $table->unsignedInteger('orders')->nullable(); // количество заказов
