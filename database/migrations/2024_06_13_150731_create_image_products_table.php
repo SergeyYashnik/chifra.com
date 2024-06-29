@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('path');
             $table->integer('id_product');
+
+            $table->foreign('id_product')->references('id')->on('products')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

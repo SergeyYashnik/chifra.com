@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('connection_product_filter_values', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('filter_value_id');
+
+            $table->unsignedInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+
+            $table->unsignedInteger('filter_value_id');
+            $table->foreign('filter_value_id')->references('id')->on('filter_values')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

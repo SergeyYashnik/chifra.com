@@ -15,11 +15,23 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image')->nullable();
-            $table->integer('id_catalog')->nullable();
-            $table->integer('lvl');
-            $table->timestamps();
 
-            $table->softDeletes();
+            $table->unsignedInteger('id_catalog')->nullable();
+            $table->foreign('id_catalog')->references('id')->on('catalogs')->onDelete('cascade');
+
+            $table->unsignedInteger('catalogs_lvl_1')->nullable();
+            $table->foreign('catalogs_lvl_1')->references('id')->on('catalogs')->onDelete('cascade');
+
+            $table->unsignedInteger('catalogs_lvl_2')->nullable();
+            $table->foreign('catalogs_lvl_2')->references('id')->on('catalogs')->onDelete('cascade');
+
+            $table->unsignedInteger('catalogs_lvl_3')->nullable();
+            $table->foreign('catalogs_lvl_3')->references('id')->on('catalogs')->onDelete('cascade');
+
+
+            $table->integer('lvl');
+
+            $table->timestamps();
         });
 
     }

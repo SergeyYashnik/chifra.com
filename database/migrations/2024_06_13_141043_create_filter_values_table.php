@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('filter_values', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_filter');
+
+            $table->unsignedInteger('id_filter');
+            $table->foreign('id_filter')->references('id')->on('filters')->onDelete('cascade');
+
             $table->string('value');
             $table->boolean('user_input');
+
             $table->timestamps();
         });
     }

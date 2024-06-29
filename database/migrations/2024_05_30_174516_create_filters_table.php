@@ -14,15 +14,18 @@ return new class extends Migration
         Schema::create('filters', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('id_catalog')->nullable();
-            $table->integer('id_filter')->nullable();
+
+            $table->unsignedInteger('id_catalog')->nullable();
+            $table->foreign('id_catalog')->references('id')->on('catalogs')->onDelete('cascade');
+
+            $table->unsignedInteger('id_filter')->nullable();
+            $table->foreign('id_filter')->references('id')->on('filters')->onDelete('cascade');
+
             $table->integer('lvl');
             $table->boolean('is_custom_input')->nullable();             # Пользователь вводит сам
             $table->boolean('required_to_fill_out')->nullable();        # обязательно для заполнения
-            # $table->boolean('user_input');
-            $table->timestamps();
 
-            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

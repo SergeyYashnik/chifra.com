@@ -39,7 +39,7 @@ class ProductController extends Controller
 
 
 
-        $brand = Brand::findOrFail($product->brand);
+        $brand = Brand::findOrFail($product->brand_id);
 
 
         $filters = Filter::where('id_catalog', $product->id_catalog)
