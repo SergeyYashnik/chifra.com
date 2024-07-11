@@ -92,9 +92,28 @@ class AdminFilterController extends Controller
     public function destroy($id)
     {
         $filter = Filter::findOrFail($id);
+
+        if ($filter->id_catalog == null) {
+            $IDfilter = $filter->id_filter;
+
+            $relatedFiltersCount = Filter::where('id_filter', $IDfilter)
+                ->where('id', '!=', $filter->id)
+                ->count();
+
+            if ($relatedFiltersCount == 0) {
+                $filter1LVL = Filter::findOrFail($IDfilter);
+
+                $filter1LVL->is_custom_input = 0;
+                $filter1LVL->required_to_fill_out = 0;
+
+                $filter1LVL->save();
+            }
+        }
+
         $filter->delete();
 
         return redirect()->back()->with('success', 'Фильтр удален');
+
     }
 
     public function removeValue($id, $valueId)

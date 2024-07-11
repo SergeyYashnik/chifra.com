@@ -194,7 +194,27 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $product->name }}</h5>
                                     <p class="card-text">Цена: {{ $product->price }}</p>
+
                                 </div>
+                                @auth
+                                    <div class="card-body">
+                                        @if($product->cartItem)
+                                            <form action="{{ route('cart.delete') }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <button type="submit" class="btn btn-danger">Удалить из корзины</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('cart.add') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <button type="submit" class="btn btn-primary">Добавить в корзину
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                @endauth
                             </a>
                         </div>
                     </div>
@@ -202,5 +222,4 @@
             </div>
         </div>
     </div>
-
 @endsection

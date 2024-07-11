@@ -45,6 +45,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('logout') }}">Logout</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('cart') }}">Корзина</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('orders.show') }}">Заказы</a>
+                        </li>
 
                     @else
                         <li class="nav-item">

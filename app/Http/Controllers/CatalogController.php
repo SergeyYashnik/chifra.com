@@ -102,8 +102,8 @@ class CatalogController extends Controller
                 ->withCount('productsLvl1 as count_1_lvl')
                 ->get();
         }
+        $massForBrand = $queryProducts->pluck('brand_id')->unique()->toArray();
 
-        $massForBrand = $queryProducts->pluck('brand')->unique()->toArray();
         $brands = Brand::whereIn('id', $massForBrand)->get();
         $requestBrands = $request->input('brands') ?? null;
 
@@ -151,7 +151,7 @@ class CatalogController extends Controller
         if ($requestMaxPrice) {
             $queryProducts->where('price', '<=', $requestMaxPrice);
         }
-        $products = $queryProducts->with('oneImage')->orderByDesc('visits')->get();
+        $products = $queryProducts->with(['oneImage', 'cartItem'])->orderByDesc('visits')->get();
 
 
         return view('catalog.show', compact(['catalogs_lvl_1', 'catalogs_lvl_2', 'catalogs_lvl_3', 'products', 'count', 'filters', 'filter_id', 'brands', 'requestCatalogLvl1', 'requestCatalogLvl2', 'requestCatalogLvl3', 'requestBrands', 'minPrice', 'maxPrice']));

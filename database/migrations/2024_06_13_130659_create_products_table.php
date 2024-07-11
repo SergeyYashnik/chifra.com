@@ -23,6 +23,10 @@ return new class extends Migration
             $table->unsignedInteger('id_catalog');
             $table->foreign('id_catalog')->references('id')->on('catalogs')->onDelete('cascade');
 
+            $table->unsignedInteger('catalogs_lvl_1')->nullable();
+            $table->unsignedInteger('catalogs_lvl_2')->nullable();
+            $table->unsignedInteger('catalogs_lvl_3')->nullable();
+
             $table->integer('sale')->nullable();
             $table->unsignedInteger('orders')->nullable();              // количество заказов
             $table->unsignedInteger('linked_product')->nullable();      // к какому товару привязан

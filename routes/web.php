@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -70,6 +72,16 @@ Route::middleware('auth')->group(function (){
     Route::post('profile/add-address', [UserController::class, 'addAddress'])->name('profile.addAddress');
     Route::delete('profile/address/{address}', [UserController::class, 'destroyAddress'])->name('address.delete');
 
+    Route::post('cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::delete('cart/delete', [CartController::class, 'delete'])->name('cart.delete');
+    Route::get('cart', [CartController::class, 'index'])->name('cart');
+    Route::post('cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+
+    Route::get('order', [OrderController::class, 'index'])->name('order');
+    Route::post('order/place', [OrderController::class, 'placeOrder'])->name('order.place');
+    Route::post('order/processPayment', [OrderController::class, 'processPayment'])->name('order.processPayment');
+    Route::get('orders', [OrderController::class, 'show'])->name('orders.show');
+
 
 
 });
@@ -102,6 +114,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
     Route::get('admin/products/create', [AdminProductController::class, 'create'])->name('admin.products.create');
     Route::post('admin/products', [AdminProductController::class, 'store'])->name('admin.products.store');
+    Route::get('admin/products/{id}/edit', [AdminProductController::class, 'edit'])->name('admin.products.edit');
+    Route::put('admin/products/{id}', [AdminProductController::class, 'update'])->name('admin.products.update');
+    Route::delete('admin/product/delete-image/{id}', [AdminProductController::class, 'deleteImage'])->name('admin.product.deleteImage');
+    Route::delete('admin/products/{id}', [AdminProductController::class, 'delete'])->name('admin.products.destroy');
 
 
 

@@ -21,6 +21,11 @@ class Product extends Model
         return $this->hasOne(ImageProduct::class, 'id_product')->latest();
     }
 
+    public function cartItem()
+    {
+        return $this->hasOne(Cart::class, 'id_product')->where('id_user', auth()->id());
+    }
+
     public function connectionProductFilterValues()
     {
         return $this->hasMany(ConnectionProductFilterValue::class, 'product_id');

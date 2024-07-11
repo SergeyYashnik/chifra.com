@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Catalog;
 use App\Models\Filter;
+use App\Models\ImageProduct;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -148,12 +150,33 @@ class AdminCatalogController extends Controller
     public function destroy($id)
     {
         $catalog = Catalog::findOrFail($id);
-        $catalog->image = null;
+
         if ($catalog->image) {
-            // Удаление файла изображения
             Storage::disk('public')->delete($catalog->image);
         }
+
+        $lvl = $catalog->lvl;
+        $productIds = collect();
+
+        // Сбор ID продуктов в зависимости от уровня каталога
+        if ($lvl == 1) {
+            $productIds = Product::where('catalogs_lvl_1', $id)->pluck('id');
+        } elseif ($lvl == 2) {
+            $productIds = Product::where('catalogs_lvl_2', $id)->pluck('id');
+        } elseif ($lvl == 3) {
+            $productIds = Product::where('catalogs_lvl_3', $id)->pluck('id');
+        }
+
+        // Сбор путей до изображений продуктов
+        $imagePaths = ImageProduct::whereIn('id_product', $productIds)->pluck('path');
+
+        // Удаление изображений с диска
+        foreach ($imagePaths as $path) {
+            Storage::disk('public')->delete($path);
+        }
+
         $catalog->delete();
+
         return redirect()->route('admin.catalog.index')->with('success', 'Категория удалена');
     }
 

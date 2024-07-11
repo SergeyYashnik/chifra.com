@@ -1,34 +1,51 @@
 @extends('layouts.main')
 
-@section('title', "Добавление товара")
+@section('title', "Редактирование товаров")
 
 @section('content')
     @include('include.admin_menu')
     <div class="container mt-4">
+        <h1>Редактирование товара</h1>
 
-        <h1>Добавление товара</h1>
+        <!-- Изображения -->
+        <div class="mb-3">
+            <div class="mt-2">
+                <h5>Текущие изображения:</h5>
+                @foreach($images as $image)
+                    <div class="mb-2">
+                        <img src="{{ asset('storage/' . $image->path) }}" alt="Изображение товара" width="100">
+                        <form action="{{ route('admin.product.deleteImage', ['id' => $image->id]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger mt-1">Удалить</button>
+                        </form>
+                    </div>
+                @endforeach
+            </div>
+        </div>
 
-        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
 
             <!-- Название товара -->
             <div class="mb-3">
                 <label for="name" class="form-label">Название товара</label>
                 <span class="text-danger">*</span>
-                <input type="text" class="form-control" id="name" name="name" required>
+                <input type="text" class="form-control" id="name" name="name" value="{{ $product->name }}" required>
             </div>
 
             <!-- Описание товара -->
             <div class="mb-3">
                 <label for="description" class="form-label">Описание товара</label>
-                <textarea class="form-control" id="description" name="description"></textarea>
+                <textarea class="form-control" id="description" name="description">{{ $product->description }}</textarea>
             </div>
 
             <!-- Цена товара -->
             <div class="mb-3">
                 <label for="price" class="form-label">Цена товара</label>
                 <span class="text-danger">*</span>
-                <input type="number" class="form-control" id="price" name="price" required>
+                <input type="number" class="form-control" id="price" name="price" value="{{ $product->price }}" required>
             </div>
 
             <!-- Бренд -->
@@ -37,27 +54,27 @@
                 <span class="text-danger">*</span>
                 <select class="form-control" id="brand_id" name="brand_id" required>
                     @foreach($brands as $brand)
-                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                        <option value="{{ $brand->id }}" {{ $brand->id == $product->brand_id ? 'selected' : '' }}>
+                            {{ $brand->name }}
+                        </option>
                     @endforeach
                 </select>
             </div>
 
-            <input type="number" class="form-control" id="id_catalog" name="id_catalog" value="{{ $id_catalog }}" hidden>
-
+            <input type="number" class="form-control" id="id_catalog" name="id_catalog" value="{{ $product->id_catalog }}" hidden>
 
             <!-- Количество товара на складе -->
             <div class="mb-3">
                 <label for="quantity" class="form-label">Количество товара на складе</label>
-                <input type="number" class="form-control" id="quantity" name="quantity" required>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="{{ $product->quantity }}" required>
             </div>
 
             <!-- Скидка -->
             <div class="mb-3">
                 <label for="sale" class="form-label">Скидка (%)</label>
-                <input type="number" class="form-control" id="sale" name="sale" min="0" max="100">
+                <input type="number" class="form-control" id="sale" name="sale" value="{{ $product->sale }}" min="0" max="100">
             </div>
 
-            <!-- Изображения -->
             <div class="mb-3">
                 <label for="images" class="form-label">Изображения</label>
                 <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/*">
@@ -80,13 +97,18 @@
                                     @endif
                                     @if($subfilter->is_custom_input)
                                         <input type="text" class="form-control" id="filter_{{ $subfilter->id }}"
-                                               name="filters[{{ $subfilter->id }}]">
+                                               name="filters[{{ $subfilter->id }}]"
+                                               @if(isset($selectedFiltersValue[$subfilter->id]))
+                                                   value="{{ $selectedFiltersValue[$subfilter->id] }}"
+                                            @endif>
                                     @else
                                         <select class="form-control" id="filter_{{ $subfilter->id }}"
                                                 name="filters[{{ $subfilter->id }}]">
                                             <option value="">Выберите значение</option>
                                             @foreach($filtersValue->where('id_filter', $subfilter->id) as $value)
-                                                <option value="{{ $value->id }}">{{ $value->value }}</option>
+                                                <option value="{{ $value->id }}" @if(isset($selectedFiltersValue[$value->id]))
+                                                    selected
+                                                    @endif>{{ $value->value }}</option>
                                             @endforeach
                                         </select>
                                     @endif
@@ -103,13 +125,18 @@
                             @endif
                             @if($filter->is_custom_input)
                                 <input type="text" class="form-control" id="filter_{{ $filter->id }}"
-                                       name="filters[{{ $filter->id }}]">
+                                       name="filters[{{ $filter->id }}]" @if(isset($selectedFiltersValue[$filter->id]))
+                                           value="{{ $selectedFiltersValue[$filter->id] }}"
+                                       @endif>
                             @else
                                 <select class="form-control" id="filter_{{ $filter->id }}"
                                         name="filters[{{ $filter->id }}]">
                                     <option value="">Выберите значение</option>
                                     @foreach($filtersValue->where('id_filter', $filter->id) as $value)
-                                        <option value="{{ $value->id }}">{{ $value->value }}</option>
+                                        <option value="{{ $value->id }}" @if(isset($selectedFiltersValue[$value->id]))
+                                            selected
+                                            @endif>{{ $value->value }}</option>
+                                        @dump($value)
                                     @endforeach
                                 </select>
                             @endif
@@ -118,7 +145,10 @@
                 @endforeach
             </div>
 
+
+
             <button type="submit" class="btn btn-primary">Сохранить</button>
         </form>
     </div>
+
 @endsection
